@@ -90,8 +90,38 @@ enum class ast_operator_type : int {
     AST_OP_SUB, //
 
     // TODO 抽象语法树其它内部节点运算符追加
+	
+	 /// @brief 二元运算符*
+    AST_OP_MUL,
 
-    /// @brief 最大标识符，表示非法运算符
+    /// @brief 二元运算符/
+    AST_OP_DIV,
+
+	/// @brief 二元运算符%
+    AST_OP_MOD,
+
+    /// @brief 一元运算符负号
+    AST_OP_NEG,
+    /// @brief 关系运算符
+    AST_OP_LT,         // <
+    AST_OP_GT,         // >
+    AST_OP_LE,         // <=
+    AST_OP_GE,         // >=
+    AST_OP_EQ,         // ==
+    AST_OP_NE,         // !=
+    
+    /// @brief 逻辑运算符
+    AST_OP_LOGIC_AND,  // &&
+    AST_OP_LOGIC_OR,   // ||
+    AST_OP_LOGIC_NOT,  // !
+    
+    /// @brief 控制流语句
+    AST_OP_IF,         // if语句
+    AST_OP_IF_ELSE,    // if-else语句
+    AST_OP_WHILE,      // while循环
+    AST_OP_BREAK,      // break语句
+    AST_OP_CONTINUE,   // continue语句
+	/// @brief 最大标识符，表示非法运算符
     AST_OP_MAX,
 };
 
@@ -280,3 +310,4 @@ ast_node * create_var_decl_stmt_node(type_attr & type, var_id_attr & id);
 /// @return ast_node* 变量声明语句节点
 ///
 ast_node * add_var_decl_node(ast_node * stmt_node, var_id_attr & id);
+

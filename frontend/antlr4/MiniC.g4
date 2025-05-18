@@ -13,8 +13,10 @@ grammar MiniC;
 // 源文件编译单元定义
 compileUnit: (funcDef | varDecl)* EOF;
 
-// 函数定义，目前不支持形参，也不支持返回void类型等
-funcDef: T_INT T_ID T_L_PAREN T_R_PAREN block;
+// 函数定义，目前不支持形参，也不支持返回void类型等 funcDef: T_INT T_ID T_L_PAREN T_R_PAREN block;
+funcDef: T_INT T_ID T_L_PAREN paramList? T_R_PAREN block;
+paramList: param (',' param)*;
+param: T_INT T_ID;
 
 // 语句块看用作函数体，这里允许多个语句，并且不含任何语句
 block: T_L_BRACE blockItemList? T_R_BRACE;
@@ -35,23 +37,59 @@ basicType: T_INT;
 varDef: T_ID;
 
 // 目前语句支持return和赋值语句
+//statement:T_RETURN expr T_SEMICOLON			# returnStatement | lVal T_ASSIGN expr T_SEMICOLON	# assignStatement | block								# blockStatement | expr? T_SEMICOLON					# expressionStatement;
+
+// 修改语句规则，增加分支和循环语句-lxg
 statement:
-	T_RETURN expr T_SEMICOLON			# returnStatement
-	| lVal T_ASSIGN expr T_SEMICOLON	# assignStatement
-	| block								# blockStatement
-	| expr? T_SEMICOLON					# expressionStatement;
+    T_RETURN expr T_SEMICOLON                 # returnStatement
+    | lVal T_ASSIGN expr T_SEMICOLON          # assignStatement
+    | block                                   # blockStatement
+    | T_IF T_L_PAREN expr T_R_PAREN statement (T_ELSE statement)?  # ifStatement
+    | T_WHILE T_L_PAREN expr T_R_PAREN statement  # whileStatement
+    | T_BREAK T_SEMICOLON                     # breakStatement
+    | T_CONTINUE T_SEMICOLON                  # continueStatement
+    | expr? T_SEMICOLON                       # expressionStatement
+    ;
 
-// 表达式文法 expr : AddExp 表达式目前只支持加法与减法运算
-expr: addExp;
+// 表达式文法 expr : AddExp 表达式目前只支持加法与减法运算 expr: addExp; 表达支持加减乘除模运算
+// 修改表达式文法，增加关系和逻辑表达式-lxg
+expr: lorExp;
 
-// 加减表达式
-addExp: unaryExp (addOp unaryExp)*;
+// 逻辑或表达式
+lorExp: landExp (T_LOGIC_OR landExp)*;
+
+// 逻辑与表达式
+landExp: eqExp (T_LOGIC_AND eqExp)*;
+
+// 相等性表达式
+eqExp: relExp ((T_EQ | T_NE) relExp)*;
+
+// 关系表达式
+relExp: addExp ((T_LT | T_GT | T_LE | T_GE) addExp)*;
+
+
+// 加减表达式 addExp: unaryExp (addOp unaryExp)*;
+addExp: mulDivExp (addOp mulDivExp)*;
 
 // 加减运算符
 addOp: T_ADD | T_SUB;
 
-// 一元表达式
-unaryExp: primaryExp | T_ID T_L_PAREN realParamList? T_R_PAREN;
+// 乘除求余表达式
+mulDivExp: unaryExp (mulDivOp unaryExp)*;
+
+// 乘除求余运算符
+mulDivOp: T_MUL | T_DIV | T_MOD;
+
+// 一元表达式 unaryExp: primaryExp | T_ID T_L_PAREN realParamList? T_R_PAREN;
+// unaryExp: T_SUB unaryExp | primaryExp | T_ID T_L_PAREN realParamList? T_R_PAREN;
+
+// 修改一元表达式，增加逻辑非
+unaryExp:
+    T_SUB unaryExp
+    | T_LOGIC_NOT unaryExp
+    | primaryExp
+    | T_ID T_L_PAREN realParamList? T_R_PAREN
+    ;
 
 // 基本表达式：括号表达式、整数、左值表达式
 primaryExp: T_L_PAREN expr T_R_PAREN | T_DIGIT | lVal;
@@ -75,14 +113,43 @@ T_COMMA: ',';
 
 T_ADD: '+';
 T_SUB: '-';
-
+T_MUL: '*';
+T_DIV: '/';
+T_MOD: '%';
+//添加关系运算符和逻辑运算符-lxg
+T_LT: '<';
+T_GT: '>';
+T_LE: '<=';
+T_GE: '>=';
+T_EQ: '==';
+T_NE: '!=';
+T_LOGIC_AND: '&&';
+T_LOGIC_OR: '||';
+T_LOGIC_NOT: '!';
+//添加控制流关键字-lxg
+T_IF: 'if';
+T_ELSE: 'else';
+T_WHILE: 'while';
+T_BREAK: 'break';
+T_CONTINUE: 'continue';
 // 要注意关键字同样也属于T_ID，因此必须放在T_ID的前面，否则会识别成T_ID
 T_RETURN: 'return';
 T_INT: 'int';
 T_VOID: 'void';
 
 T_ID: [a-zA-Z_][a-zA-Z0-9_]*;
-T_DIGIT: '0' | [1-9][0-9]*;
+//T_DIGIT: '0' | [1-9][0-9]* | '0'[0-7]+ | '0'[xX][0-9a-fA-F]+;
+T_DIGIT:
+	'0'
+	| [1-9][0-9]*
+	| '0' [0-7]+
+	| '0' [xX][0-9a-fA-F]+;
+
+
+
+// 添加注释规则-lxg
+COMMENT: '//' ~[\r\n]* -> skip;  // 单行注释
+BLOCK_COMMENT: '/*' .*? '*/' -> skip;  // 多行注释
 
 /* 空白符丢弃 */
 WS: [ \r\n\t]+ -> skip;

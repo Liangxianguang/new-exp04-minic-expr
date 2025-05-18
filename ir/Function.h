@@ -25,6 +25,10 @@
 #include "MemVariable.h"
 #include "IRCode.h"
 
+// 在这里添加前向声明-lxg
+class BinaryInstruction;
+class MoveInstruction;
+
 ///
 /// @brief 描述函数信息的类，是全局静态存储，其Value的类型为FunctionType
 ///
@@ -170,6 +174,50 @@ public:
     ///
     void realArgCountReset();
 
+	/// 
+	///添加对循环控制结构所需的break和continue标签的支持-lxg
+
+    /// @brief 设置循环的break标签
+    /// @param label break跳转目标标签
+    void setBreakLabel(Instruction* label) {
+        breakLabel = label;
+    }
+    
+    /// @brief 获取当前循环的break标签
+    /// @return break跳转目标标签
+    Instruction* getBreakLabel() {
+        return breakLabel;
+    }
+    
+    /// @brief 设置循环的continue标签
+    /// @param label continue跳转目标标签
+    void setContinueLabel(Instruction* label) {
+        continueLabel = label;
+    }
+    
+    /// @brief 获取当前循环的continue标签
+    /// @return continue跳转目标标签
+    Instruction* getContinueLabel() {
+        return continueLabel;
+    }
+
+	// 在 public 部分的其他函数声明后添加-lxg
+    
+    /// @brief 用于在逻辑运算过程中传递临时指令的辅助结构
+    struct ExtraData {
+        /// @brief 布尔值检查指令
+        BinaryInstruction* boolCheckInst = nullptr;
+        
+        /// @brief 将布尔值移动到结果变量的指令
+        MoveInstruction* moveInst = nullptr;
+    };
+    
+    /// @brief 获取额外数据的引用
+    /// @return 额外数据的引用
+    ExtraData& getExtraData() {
+        return extraData;
+    }
+
 private:
     ///
     /// @brief 函数的返回值类型，有点冗余，可删除，直接从type中取得即可
@@ -185,6 +233,15 @@ private:
     /// @brief 是否是内置函数或者外部库函数
     ///
     bool builtIn = false;
+    ///
+    /// @brief 当前循环的break标签，用于break语句跳转
+    ///
+    Instruction* breakLabel = nullptr;
+    
+    ///
+    /// @brief 当前循环的continue标签，用于continue语句跳转
+    ///
+    Instruction* continueLabel = nullptr;
 
     ///
     /// @brief 线性IR指令块，可包含多条IR指令
@@ -250,4 +307,9 @@ private:
     /// @brief 累计的实参个数，用于ARG指令的统计
     ///
     int32_t realArgCount = 0;
+
+	// 在 private 部分的其他成员变量后添加-lxg
+    
+    /// @brief 用于在函数间传递临时指令的额外数据
+    ExtraData extraData;
 };
