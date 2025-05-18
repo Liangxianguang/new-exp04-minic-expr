@@ -50,6 +50,29 @@ enum class IRInstOperator : std::int8_t {
     IRINST_OP_ARG,
 
     /* 后续可追加其他的IR指令 */
+	///添加乘法、除法和求余的操作符-lxg
+    /// @brief 整数的乘法指令，二元运算
+    IRINST_OP_MUL_I,
+
+    /// @brief 整数的除法指令，二元运算
+    IRINST_OP_DIV_I,
+
+    /// @brief 整数的求余指令，二元运算
+    IRINST_OP_MOD_I,
+	
+	/// @brief 整数的一元负号运算指令
+    IRINST_OP_NEG_I,   // lxg
+
+	    // 分支和跳转
+    IRINST_OP_BRANCH,    // 条件分支
+    
+    /// @brief 整数比较-lxg
+    IRINST_OP_LT_I,      // <
+    IRINST_OP_GT_I,      // >
+    IRINST_OP_LE_I,      // <=
+    IRINST_OP_GE_I,      // >=
+    IRINST_OP_EQ_I,      // ==
+    IRINST_OP_NE_I,      // !=
 
     /// @brief 最大指令码，也是无效指令
     IRINST_OP_MAX

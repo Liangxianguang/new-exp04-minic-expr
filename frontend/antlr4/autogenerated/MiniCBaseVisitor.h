@@ -23,6 +23,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitParamList(MiniCParser::ParamListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitParam(MiniCParser::ParamContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitBlock(MiniCParser::BlockContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -59,6 +67,22 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitIfStatement(MiniCParser::IfStatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitWhileStatement(MiniCParser::WhileStatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitBreakStatement(MiniCParser::BreakStatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitContinueStatement(MiniCParser::ContinueStatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitExpressionStatement(MiniCParser::ExpressionStatementContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -67,11 +91,35 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitLorExp(MiniCParser::LorExpContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLandExp(MiniCParser::LandExpContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitEqExp(MiniCParser::EqExpContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitRelExp(MiniCParser::RelExpContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitAddExp(MiniCParser::AddExpContext *ctx) override {
     return visitChildren(ctx);
   }
 
   virtual std::any visitAddOp(MiniCParser::AddOpContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitMulDivExp(MiniCParser::MulDivExpContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitMulDivOp(MiniCParser::MulDivOpContext *ctx) override {
     return visitChildren(ctx);
   }
 
